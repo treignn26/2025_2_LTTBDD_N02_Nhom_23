@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:intl/intl.dart';
 import 'package:btap_lon/giao_dien/screen_chi_tieu.dart';
+import 'package:btap_lon/giao_dien/screen_bao_cao.dart';
 
 class ScreenLich extends StatefulWidget {
   const ScreenLich({super.key});
@@ -37,7 +38,8 @@ class _ScreenLichState extends State<ScreenLich> {
             lastDay: DateTime.utc(3000, 12, 31),
             focusedDay: _focusedDay,
             calendarFormat: _calendarFormat,
-            selectedDayPredicate: (day) => isSameDay(_selectedDay, day),
+            selectedDayPredicate: (day) =>
+                isSameDay(_selectedDay, day),
             onDaySelected: (selectedDay, focusedDay) {
               setState(() {
                 _selectedDay = selectedDay;
@@ -70,8 +72,16 @@ class _ScreenLichState extends State<ScreenLich> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                _buildSummaryItem('Tổng hiện có', '10.000.000', Colors.blue),
-                _buildSummaryItem('Tổng chi', '5.000.000', Colors.red),
+                _buildSummaryItem(
+                  'Tổng hiện có',
+                  '10.000.000',
+                  Colors.blue,
+                ),
+                _buildSummaryItem(
+                  'Tổng chi',
+                  '5.000.000',
+                  Colors.red,
+                ),
               ],
             ),
           ),
@@ -100,23 +110,35 @@ class _ScreenLichState extends State<ScreenLich> {
       ),
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: 1,
-        selectedItemColor: const Color.fromARGB(255, 98, 151, 194),
+        selectedItemColor: const Color.fromARGB(
+          255,
+          98,
+          151,
+          194,
+        ),
         onTap: (index) {
           if (index == 1) return;
           if (index == 0) {
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => const ScreenChiTieu()),
+              MaterialPageRoute(
+                builder: (context) => const ScreenChiTieu(),
+              ),
             );
           } else if (index == 2) {
             Navigator.pushReplacement(
               context,
-              MaterialPageRoute(builder: (context) => const ScreenBaoCao()),
+              MaterialPageRoute(
+                builder: (context) => const ScreenBaoCao(),
+              ),
             );
           }
         },
         items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.edit), label: 'Nhập vào'),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.edit),
+            label: 'Nhập vào',
+          ),
           BottomNavigationBarItem(
             icon: Icon(Icons.calendar_month),
             label: 'Lịch',
@@ -130,7 +152,11 @@ class _ScreenLichState extends State<ScreenLich> {
     );
   }
 
-  Widget _buildSummaryItem(String title, String amount, Color color) {
+  Widget _buildSummaryItem(
+    String title,
+    String amount,
+    Color color,
+  ) {
     return Column(
       children: [
         Text(title, style: const TextStyle(color: Colors.grey)),
@@ -162,7 +188,10 @@ class _ScreenLichState extends State<ScreenLich> {
       subtitle: Text(subtitle),
       trailing: Text(
         "$amount VND",
-        style: const TextStyle(color: Colors.red, fontWeight: FontWeight.bold),
+        style: const TextStyle(
+          color: Colors.red,
+          fontWeight: FontWeight.bold,
+        ),
       ),
     );
   }
