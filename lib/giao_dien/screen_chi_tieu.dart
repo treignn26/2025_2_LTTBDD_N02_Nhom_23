@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 import 'package:btap_lon/model/chi_tieu_provider.dart';
 import 'package:btap_lon/giao_dien/screen_bao_cao.dart';
 import 'package:btap_lon/giao_dien/screen_lich.dart';
+import 'package:btap_lon/giao_dien/screen_them_danh_muc.dart';
 
 class ScreenChiTieu extends StatefulWidget {
   const ScreenChiTieu({super.key});
@@ -122,7 +123,13 @@ class _ScreenChiTieuState extends State<ScreenChiTieu> {
                         return GestureDetector(
                           onTap: () {
                             if (isEditButton) {
-                              print("Mở trang chỉnh sửa danh mục");
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) =>
+                                      const ScreenThemDanhMuc(),
+                                ),
+                              );
                             } else {
                               setState(
                                 () => _selectedDanhMuc = danhMuc['name'],
