@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'dart:async';
+import 'package:btap_lon/giao_dien/screen_chi_tieu.dart';
 
 class TrangWidget extends StatelessWidget {
   const TrangWidget({super.key});

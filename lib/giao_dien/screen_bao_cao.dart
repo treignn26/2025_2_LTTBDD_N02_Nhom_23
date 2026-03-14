@@ -24,12 +24,10 @@ class _ScreenBaoCaoState extends State<ScreenBaoCao> {
         backgroundColor: const Color.fromARGB(255, 98, 151, 194),
         title: DropdownButton<String>(
           value: _viewType,
-          items: ['Tháng', 'Năm']
-              .map(
-                (e) =>
-                    DropdownMenuItem(value: e, child: Text(e)),
-              )
-              .toList(),
+          items: [
+            'Tháng',
+            'Năm',
+          ].map((e) => DropdownMenuItem(value: e, child: Text(e))).toList(),
           onChanged: (val) {
             setState(() => _viewType = val!);
           },
@@ -77,17 +75,9 @@ class _ScreenBaoCaoState extends State<ScreenBaoCao> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                _buildStatItem(
-                  'Chi tiêu',
-                  provider.totalExpense,
-                  Colors.red,
-                ),
+                _buildStatItem('Chi tiêu', provider.totalExpense, Colors.red),
                 _buildStatItem('Thu nhập', 0, Colors.blue),
-                _buildStatItem(
-                  'Thu chi',
-                  -provider.totalExpense,
-                  Colors.black,
-                ),
+                _buildStatItem('Thu chi', -provider.totalExpense, Colors.black),
               ],
             ),
             SizedBox(
@@ -130,6 +120,23 @@ class _ScreenBaoCaoState extends State<ScreenBaoCao> {
                 ],
               ),
             ),
+            // ListView.builder(
+            //   shrinkWrap: true,
+            //   physics: NeverScrollableScrollPhysics(),
+            //   itemCount: provider.items.length,
+            //   itemBuilder: (context, index) {
+            //     final item = provider.items[index];
+            //     return ListTile(
+            //       leading: Icon(item.iconData),
+            //       title: Text(item.danhMuc),
+            //       subtitle: Text(item.ghiChu),
+            //       trailing: Text(
+            //         '-${item.soTien}VND',
+            //         style: TextStyle(color: Colors.red),
+            //       ),
+            //     );
+            //   },
+            // ),
           ],
         ),
       ),
@@ -137,20 +144,13 @@ class _ScreenBaoCaoState extends State<ScreenBaoCao> {
     );
   }
 
-  Widget _buildStatItem(
-    String label,
-    double value,
-    Color color,
-  ) {
+  Widget _buildStatItem(String label, double value, Color color) {
     return Column(
       children: [
         Text(label),
         Text(
           '${value.toInt()}VND',
-          style: TextStyle(
-            color: color,
-            fontWeight: FontWeight.bold,
-          ),
+          style: TextStyle(color: color, fontWeight: FontWeight.bold),
         ),
       ],
     );
@@ -166,33 +166,26 @@ class _ScreenBaoCaoState extends State<ScreenBaoCao> {
         if (index == 0) {
           Navigator.push(
             context,
-            MaterialPageRoute(
-              builder: (context) => const ScreenChiTieu(),
-            ),
+            MaterialPageRoute(builder: (context) => const ScreenChiTieu()),
           );
         } else if (index == 1) {
           Navigator.pushReplacement(
             context,
-            MaterialPageRoute(
-              builder: (context) => const ScreenLich(),
-            ),
+            MaterialPageRoute(builder: (context) => const ScreenLich()),
           );
         }
       },
       items: const [
-        BottomNavigationBarItem(
-          icon: Icon(Icons.edit),
-          label: 'Nhập vào',
-        ),
+        BottomNavigationBarItem(icon: Icon(Icons.edit), label: 'Nhập vào'),
         BottomNavigationBarItem(
           icon: Icon(Icons.calendar_month),
           label: 'Lịch',
         ),
-        BottomNavigationBarItem(
-          icon: Icon(Icons.pie_chart),
-          label: 'Báo cáo',
-        ),
+        BottomNavigationBarItem(icon: Icon(Icons.pie_chart), label: 'Báo cáo'),
       ],
     );
   }
 }
+// extension on ChiTieuProvider {
+//   get items => null;
+// }

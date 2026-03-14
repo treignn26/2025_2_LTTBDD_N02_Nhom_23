@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:btap_lon/model/chi_tieu_provider.dart';
+import 'package:btap_lon/giao_dien/screen_bao_cao.dart';
+import 'package:btap_lon/giao_dien/screen_lich.dart';
 
 class ScreenChiTieu extends StatefulWidget {
   const ScreenChiTieu({super.key});
@@ -12,43 +14,17 @@ class ScreenChiTieu extends StatefulWidget {
 
 class _ScreenChiTieuState extends State<ScreenChiTieu> {
   DateTime _selectedDate = DateTime.now();
-  final TextEditingController _ghiChuController =
-      TextEditingController();
-  final TextEditingController _soTienController =
-      TextEditingController();
+  final TextEditingController _ghiChuController = TextEditingController();
+  final TextEditingController _soTienController = TextEditingController();
   String _selectedDanhMuc = 'Ăn uống';
 
   List<Map<String, dynamic>> danhMucs = [
-    {
-      'name': 'Ăn uống',
-      'icon': Icons.restaurant,
-      'color': Colors.orange,
-    },
-    {
-      'name': 'Giao hàng',
-      'icon': Icons.local_shipping,
-      'color': Colors.blue,
-    },
-    {
-      'name': 'Mua sắm',
-      'icon': Icons.shopping_cart,
-      'color': Colors.green,
-    },
-    {
-      'name': 'Giải trí',
-      'icon': Icons.movie,
-      'color': Colors.purple,
-    },
-    {
-      'name': 'Y tế',
-      'icon': Icons.local_hospital,
-      'color': Colors.red,
-    },
-    {
-      'name': 'Giáo dục',
-      'icon': Icons.school,
-      'color': Colors.indigo,
-    },
+    {'name': 'Ăn uống', 'icon': Icons.restaurant, 'color': Colors.orange},
+    {'name': 'Giao hàng', 'icon': Icons.local_shipping, 'color': Colors.blue},
+    {'name': 'Mua sắm', 'icon': Icons.shopping_cart, 'color': Colors.green},
+    {'name': 'Giải trí', 'icon': Icons.movie, 'color': Colors.purple},
+    {'name': 'Y tế', 'icon': Icons.local_hospital, 'color': Colors.red},
+    {'name': 'Giáo dục', 'icon': Icons.school, 'color': Colors.indigo},
   ];
 
   Future<void> _selectDate(BuildContext context) async {
@@ -114,35 +90,25 @@ class _ScreenChiTieuState extends State<ScreenChiTieu> {
             GridView.builder(
               shrinkWrap: true,
               physics: const NeverScrollableScrollPhysics(),
-              gridDelegate:
-                  const SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 3,
-                  ),
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 3,
+              ),
               itemCount: danhMucs.length,
               itemBuilder: (context, index) {
                 return GestureDetector(
                   onTap: () => setState(
-                    () => _selectedDanhMuc =
-                        danhMucs[index]['name'],
+                    () => _selectedDanhMuc = danhMucs[index]['name'],
                   ),
                   child: Container(
                     decoration: BoxDecoration(
                       border: Border.all(
-                        color:
-                            _selectedDanhMuc ==
-                                danhMucs[index]['name']
-                            ? const Color.fromARGB(
-                                255,
-                                37,
-                                28,
-                                28,
-                              )
+                        color: _selectedDanhMuc == danhMucs[index]['name']
+                            ? const Color.fromARGB(255, 37, 28, 28)
                             : Colors.grey.shade300,
                       ),
                     ),
                     child: Column(
-                      mainAxisAlignment:
-                          MainAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Icon(
                           danhMucs[index]['icon'],
@@ -163,27 +129,18 @@ class _ScreenChiTieuState extends State<ScreenChiTieu> {
                 ChiTieu moi = ChiTieu(
                   ngay: _selectedDate,
                   ghiChu: _ghiChuController.text,
-                  soTien:
-                      double.tryParse(_soTienController.text) ??
-                      0,
+                  soTien: double.tryParse(_soTienController.text) ?? 0,
                   danhMuc: _selectedDanhMuc,
                   iconData: Icons.money,
                 );
-                print(
-                  'Đã lưu: ${moi.soTien} cho ${moi.danhMuc}',
-                );
+                print('Đã lưu: ${moi.soTien} cho ${moi.danhMuc}');
                 Provider.of<ChiTieuProvider>(
                   context,
                   listen: false,
                 ).addChiTieu(moi);
               },
               style: ElevatedButton.styleFrom(
-                backgroundColor: const Color.fromARGB(
-                  255,
-                  98,
-                  151,
-                  194,
-                ),
+                backgroundColor: const Color.fromARGB(255, 98, 151, 194),
                 minimumSize: const Size(double.infinity, 50),
               ),
               child: const Text(
@@ -201,24 +158,17 @@ class _ScreenChiTieuState extends State<ScreenChiTieu> {
           if (index == 1) {
             Navigator.push(
               context,
-              MaterialPageRoute(
-                builder: (context) => const ScreenLich(),
-              ),
+              MaterialPageRoute(builder: (context) => const ScreenLich()),
             );
           } else if (index == 2) {
             Navigator.pushReplacement(
               context,
-              MaterialPageRoute(
-                builder: (context) => const ScreenBaoCao(),
-              ),
+              MaterialPageRoute(builder: (context) => const ScreenBaoCao()),
             );
           }
         },
         items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.edit),
-            label: 'Nhập vào',
-          ),
+          BottomNavigationBarItem(icon: Icon(Icons.edit), label: 'Nhập vào'),
           BottomNavigationBarItem(
             icon: Icon(Icons.calendar_month),
             label: 'Lịch',
