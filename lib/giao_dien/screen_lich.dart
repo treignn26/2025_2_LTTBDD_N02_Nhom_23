@@ -5,6 +5,8 @@ import 'package:table_calendar/table_calendar.dart';
 import 'package:intl/intl.dart';
 import 'package:btap_lon/giao_dien/screen_chi_tieu.dart';
 import 'package:btap_lon/giao_dien/screen_bao_cao.dart';
+import 'package:btap_lon/giao_dien/screen_thong_tin.dart';
+import 'package:btap_lon/model/app_translations.dart';
 
 class ScreenLich extends StatefulWidget {
   const ScreenLich({super.key});
@@ -23,21 +25,23 @@ class _ScreenLichState extends State<ScreenLich> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: const Color.fromARGB(255, 98, 151, 194),
-        title: const Text('Sổ thu chi'),
+        title: Text(AppTrans.getText(context, 'so_thu_chi')),
         centerTitle: true,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () => Navigator.pop(context),
         ),
-        // actions: [
-        //   IconButton(
-        //     icon: const Icon(Icons.search),
-        //     onPressed: () {
-        //       //trang timf kiemse
-        //     },
-        //   ),
-        //   const Icon(Icons.more_vert),
-        // ],
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.info_outline, color: Colors.white),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const ScreenThongTin()),
+              );
+            },
+          ),
+        ],
       ),
       body: Column(
         children: [
@@ -56,11 +60,11 @@ class _ScreenLichState extends State<ScreenLich> {
             calendarFormat: CalendarFormat.month,
             calendarStyle: const CalendarStyle(
               todayDecoration: BoxDecoration(
-                color: const Color.fromARGB(255, 98, 151, 194),
+                color: Color.fromARGB(255, 98, 151, 194),
                 shape: BoxShape.circle,
               ),
               selectedDecoration: BoxDecoration(
-                color: const Color.fromARGB(255, 98, 151, 194),
+                color: Color.fromARGB(255, 98, 151, 194),
                 shape: BoxShape.circle,
               ),
             ),
@@ -98,15 +102,15 @@ class _ScreenLichState extends State<ScreenLich> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Column(
-                            children: const [
+                            children: [
                               Text(
-                                'Tổng hiện có',
-                                style: TextStyle(
+                                AppTrans.getText(context, 'tong_hien_co'),
+                                style: const TextStyle(
                                   color: Colors.grey,
                                   fontSize: 14,
                                 ),
                               ),
-                              Text(
+                              const Text(
                                 '0 VND',
                                 style: TextStyle(
                                   color: Colors.blue,
@@ -118,9 +122,9 @@ class _ScreenLichState extends State<ScreenLich> {
                           ),
                           Column(
                             children: [
-                              const Text(
-                                'Tổng chi',
-                                style: TextStyle(
+                              Text(
+                                AppTrans.getText(context, 'tong_chi'),
+                                style: const TextStyle(
                                   color: Colors.grey,
                                   fontSize: 14,
                                 ),
@@ -145,10 +149,13 @@ class _ScreenLichState extends State<ScreenLich> {
 
                     Expanded(
                       child: itemsTheoNgay.isEmpty
-                          ? const Center(
+                          ? Center(
                               child: Text(
-                                'Không có chi tiêu nào',
-                                style: TextStyle(color: Colors.grey),
+                                AppTrans.getText(
+                                  context,
+                                  'khong_co_chi_tieu_nao',
+                                ),
+                                style: const TextStyle(color: Colors.grey),
                               ),
                             )
                           : ListView.builder(
@@ -177,14 +184,17 @@ class _ScreenLichState extends State<ScreenLich> {
                                     ),
                                   ),
                                   title: Text(
-                                    item.danhMuc,
+                                    AppTrans.getText(context, item.danhMuc),
                                     style: const TextStyle(
                                       fontWeight: FontWeight.bold,
                                     ),
                                   ),
                                   subtitle: Text(
                                     item.ghiChu.isEmpty
-                                        ? 'Không có ghi chú'
+                                        ? AppTrans.getText(
+                                            context,
+                                            'khong_co_ghi_chu',
+                                          )
                                         : item.ghiChu,
                                   ),
                                   trailing: Text(
@@ -223,15 +233,18 @@ class _ScreenLichState extends State<ScreenLich> {
             );
           }
         },
-        items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.edit), label: 'Nhập vào'),
+        items: [
           BottomNavigationBarItem(
-            icon: Icon(Icons.calendar_month),
-            label: 'Lịch',
+            icon: const Icon(Icons.edit),
+            label: AppTrans.getText(context, 'nhap_vao'),
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.pie_chart),
-            label: 'Báo cáo',
+            icon: const Icon(Icons.calendar_month),
+            label: AppTrans.getText(context, 'lich'),
+          ),
+          BottomNavigationBarItem(
+            icon: const Icon(Icons.pie_chart),
+            label: AppTrans.getText(context, 'bao_cao'),
           ),
         ],
       ),
@@ -241,7 +254,10 @@ class _ScreenLichState extends State<ScreenLich> {
   Widget _buildSummaryItem(String title, String amount, Color color) {
     return Column(
       children: [
-        Text(title, style: const TextStyle(color: Colors.grey)),
+        Text(
+          AppTrans.getText(context, title),
+          style: const TextStyle(color: Colors.grey),
+        ),
         Text(
           "$amount VND",
           style: TextStyle(
@@ -266,8 +282,8 @@ class _ScreenLichState extends State<ScreenLich> {
         backgroundColor: iconColor.withOpacity(0.1),
         child: Icon(icon, color: iconColor),
       ),
-      title: Text(title),
-      subtitle: Text(subtitle),
+      title: Text(AppTrans.getText(context, title)),
+      subtitle: Text(AppTrans.getText(context, subtitle)),
       trailing: Text(
         "$amount VND",
         style: const TextStyle(color: Colors.red, fontWeight: FontWeight.bold),

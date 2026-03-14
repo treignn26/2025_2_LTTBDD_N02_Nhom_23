@@ -6,6 +6,8 @@ import 'package:btap_lon/model/chi_tieu_provider.dart';
 import 'package:btap_lon/giao_dien/screen_bao_cao.dart';
 import 'package:btap_lon/giao_dien/screen_lich.dart';
 import 'package:btap_lon/giao_dien/screen_them_danh_muc.dart';
+import 'package:btap_lon/giao_dien/screen_thong_tin.dart';
+import 'package:btap_lon/model/app_translations.dart';
 
 class ScreenChiTieu extends StatefulWidget {
   const ScreenChiTieu({super.key});
@@ -17,16 +19,8 @@ class _ScreenChiTieuState extends State<ScreenChiTieu> {
   DateTime _selectedDate = DateTime.now();
   final TextEditingController _ghiChuController = TextEditingController();
   final TextEditingController _soTienController = TextEditingController();
-  String _selectedDanhMuc = 'Ăn uống';
 
-  // List<Map<String, dynamic>> danhMucs = [
-  //   {'name': 'Ăn uống', 'icon': Icons.restaurant, 'color': Colors.orange},
-  //   {'name': 'Giao hàng', 'icon': Icons.local_shipping, 'color': Colors.blue},
-  //   {'name': 'Mua sắm', 'icon': Icons.shopping_cart, 'color': Colors.green},
-  //   {'name': 'Giải trí', 'icon': Icons.movie, 'color': Colors.purple},
-  //   {'name': 'Y tế', 'icon': Icons.local_hospital, 'color': Colors.red},
-  //   {'name': 'Giáo dục', 'icon': Icons.school, 'color': Colors.indigo},
-  // ];
+  String _selectedDanhMuc = 'Ăn uống';
 
   Future<void> _selectDate(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
@@ -45,9 +39,20 @@ class _ScreenChiTieuState extends State<ScreenChiTieu> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Nhập chi tiêu'),
+        title: Text(AppTrans.getText(context, 'nhap_chi_tieu')),
         backgroundColor: const Color.fromARGB(255, 98, 151, 194),
         centerTitle: true,
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.info_outline, color: Colors.white),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const ScreenThongTin()),
+              );
+            },
+          ),
+        ],
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(1),
           child: Container(
@@ -62,7 +67,7 @@ class _ScreenChiTieuState extends State<ScreenChiTieu> {
           children: [
             ListTile(
               title: Text(
-                'Ngày: ${DateFormat('dd/MM/yyyy').format(_selectedDate)}',
+                '${AppTrans.getText(context, 'ngay')}: ${DateFormat('dd/MM/yyyy').format(_selectedDate)}',
               ),
               trailing: const Icon(Icons.calendar_today),
               onTap: () => _selectDate(context),
@@ -70,29 +75,31 @@ class _ScreenChiTieuState extends State<ScreenChiTieu> {
 
             TextField(
               controller: _ghiChuController,
-              decoration: const InputDecoration(
-                labelText: 'Ghi chú',
-                hintText: 'Chưa nhập vào',
+              decoration: InputDecoration(
+                labelText: AppTrans.getText(context, 'ghi_chu'),
+                hintText: AppTrans.getText(context, 'chua_nhap_vao'),
               ),
             ),
             TextField(
               controller: _soTienController,
               keyboardType: TextInputType.number,
-              decoration: const InputDecoration(
-                labelText: 'Tiền chi',
+              decoration: InputDecoration(
+                labelText: AppTrans.getText(context, 'tien_chi'),
                 suffixText: 'VNĐ',
               ),
             ),
             const SizedBox(height: 20),
-            const Align(
+
+            Align(
               alignment: Alignment.centerLeft,
-              child: Text('Danh mục'),
+              child: Text(AppTrans.getText(context, 'danh_muc_label')),
             ),
+
             Consumer<ChiTieuProvider>(
               builder: (context, provider, child) {
                 final displayList = List.from(provider.danhMucs);
                 displayList.add({
-                  'name': 'Chỉnh sửa',
+                  'name': 'chinh_sua_key',
                   'icon': Icons.edit,
                   'color': Colors.grey,
                 });
@@ -163,7 +170,7 @@ class _ScreenChiTieuState extends State<ScreenChiTieu> {
                                 ),
                                 const SizedBox(height: 4),
                                 Text(
-                                  danhMuc['name'],
+                                  AppTrans.getText(context, danhMuc['name']),
                                   style: TextStyle(
                                     fontSize: 12,
                                     color: isEditButton
@@ -204,9 +211,9 @@ class _ScreenChiTieuState extends State<ScreenChiTieu> {
                 backgroundColor: const Color.fromARGB(255, 98, 151, 194),
                 minimumSize: const Size(double.infinity, 50),
               ),
-              child: const Text(
-                'Nhập khoản chi',
-                style: TextStyle(color: Colors.white),
+              child: Text(
+                AppTrans.getText(context, 'nhap_khoan_chi_btn'),
+                style: const TextStyle(color: Colors.white),
               ),
             ),
           ],
@@ -228,19 +235,21 @@ class _ScreenChiTieuState extends State<ScreenChiTieu> {
             );
           }
         },
-        items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.edit), label: 'Nhập vào'),
+        items: [
           BottomNavigationBarItem(
-            icon: Icon(Icons.calendar_month),
-            label: 'Lịch',
+            icon: const Icon(Icons.edit),
+            label: AppTrans.getText(context, 'nhap_vao'),
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.pie_chart),
-            label: 'Báo cáo',
+            icon: const Icon(Icons.calendar_month),
+            label: AppTrans.getText(context, 'lich'),
+          ),
+          BottomNavigationBarItem(
+            icon: const Icon(Icons.pie_chart),
+            label: AppTrans.getText(context, 'bao_cao'),
           ),
         ],
         selectedItemColor: const Color.fromARGB(255, 98, 151, 194),
-        //unselectedItemColor: Colors.grey,
         type: BottomNavigationBarType.fixed,
       ),
     );

@@ -7,6 +7,8 @@ import 'package:btap_lon/giao_dien/screen_chi_tieu.dart';
 import 'package:btap_lon/giao_dien/screen_lich.dart';
 import 'package:btap_lon/giao_dien/screen_bao_cao.dart';
 import 'package:btap_lon/model/chi_tieu.dart';
+import 'package:btap_lon/giao_dien/screen_thong_tin.dart';
+import 'package:btap_lon/model/app_translations.dart';
 
 class ScreenBaoCao extends StatefulWidget {
   const ScreenBaoCao({super.key});
@@ -16,7 +18,7 @@ class ScreenBaoCao extends StatefulWidget {
 
 class _ScreenBaoCaoState extends State<ScreenBaoCao> {
   DateTime _viewData = DateTime.now();
-  String _viewType = 'Tháng';
+  String _viewType = 'thang';
   @override
   Widget build(BuildContext context) {
     var provider = Provider.of<ChiTieuProvider>(context);
@@ -59,15 +61,29 @@ class _ScreenBaoCaoState extends State<ScreenBaoCao> {
         backgroundColor: const Color.fromARGB(255, 98, 151, 194),
         title: DropdownButton<String>(
           value: _viewType,
-          items: [
-            'Tháng',
-            'Năm',
-          ].map((e) => DropdownMenuItem(value: e, child: Text(e))).toList(),
+          items: ['thang', 'nam'].map((key) {
+            return DropdownMenuItem<String>(
+              value: key,
+              child: Text(AppTrans.getText(context, key)),
+            );
+          }).toList(),
           onChanged: (val) {
-            setState(() => _viewType = val!);
+            if (val != null) {
+              setState(() => _viewType = val); // Cập nhật lại key
+            }
           },
         ),
-        actions: [IconButton(icon: const Icon(Icons.search), onPressed: () {})],
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.info_outline, color: Colors.white),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const ScreenThongTin()),
+              );
+            },
+          ),
+        ],
       ),
       body: SingleChildScrollView(
         child: Column(
@@ -110,13 +126,21 @@ class _ScreenBaoCaoState extends State<ScreenBaoCao> {
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 // Thay vì provider.totalExpense, mình dùng tongChiThang để chuẩn xác theo tháng
-                _buildStatItem('Chi tiêu', tongChiThang, Colors.red),
                 _buildStatItem(
-                  'Thu nhập',
+                  AppTrans.getText(context, 'chi_tieu'),
+                  tongChiThang,
+                  Colors.red,
+                ),
+                _buildStatItem(
+                  AppTrans.getText(context, 'thu_nhap'),
                   0,
                   Colors.blue,
                 ), // Tạm để 0 vì chưa có thu nhập
-                _buildStatItem('Thu chi', -tongChiThang, Colors.black),
+                _buildStatItem(
+                  AppTrans.getText(context, 'thu_chi'),
+                  -tongChiThang,
+                  Colors.black,
+                ),
               ],
             ),
             const SizedBox(height: 20),
@@ -124,10 +148,10 @@ class _ScreenBaoCaoState extends State<ScreenBaoCao> {
             SizedBox(
               height: 200,
               child: itemsThangNay.isEmpty
-                  ? const Center(
+                  ? Center(
                       child: Text(
-                        'Chưa có chi tiêu nào trong tháng này',
-                        style: TextStyle(color: Colors.grey),
+                        AppTrans.getText(context, 'chua_co_chi_tieu_nao'),
+                        style: const TextStyle(color: Colors.grey),
                       ),
                     )
                   : PieChart(
@@ -234,13 +258,19 @@ class _ScreenBaoCaoState extends State<ScreenBaoCao> {
           );
         }
       },
-      items: const [
-        BottomNavigationBarItem(icon: Icon(Icons.edit), label: 'Nhập vào'),
+      items: [
         BottomNavigationBarItem(
-          icon: Icon(Icons.calendar_month),
-          label: 'Lịch',
+          icon: const Icon(Icons.edit),
+          label: AppTrans.getText(context, 'nhap_vao'),
         ),
-        BottomNavigationBarItem(icon: Icon(Icons.pie_chart), label: 'Báo cáo'),
+        BottomNavigationBarItem(
+          icon: const Icon(Icons.calendar_month),
+          label: AppTrans.getText(context, 'lich'),
+        ),
+        BottomNavigationBarItem(
+          icon: const Icon(Icons.pie_chart),
+          label: AppTrans.getText(context, 'bao_cao'),
+        ),
       ],
     );
   }

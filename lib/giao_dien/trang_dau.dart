@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'dart:async';
 import 'package:btap_lon/giao_dien/screen_chi_tieu.dart';
+import 'package:btap_lon/model/app_translations.dart';
 
 class TrangWidget extends StatefulWidget {
   const TrangWidget({super.key});
@@ -41,9 +42,9 @@ class _TrangWidgetState extends State<TrangWidget> {
                 Image.asset('assets/images/anh1.jpg', width: 60),
                 const SizedBox(height: 10),
                 Center(
-                  child: const Text(
-                    'Quản lý chi tiêu',
-                    style: TextStyle(
+                  child: Text(
+                    AppTrans.getText(context, 'quan_ly_chi_tieu'),
+                    style: const TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
                       color: Colors.black87,

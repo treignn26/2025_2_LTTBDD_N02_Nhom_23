@@ -1,18 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:btap_lon/model/chi_tieu_provider.dart';
+import 'package:btap_lon/model/app_translations.dart';
 
 class ScreenThemDanhMuc extends StatefulWidget {
   const ScreenThemDanhMuc({super.key});
 
   @override
-  State<ScreenThemDanhMuc> createState() =>
-      _ScreenThemDanhMucState();
+  State<ScreenThemDanhMuc> createState() => _ScreenThemDanhMucState();
 }
 
 class _ScreenThemDanhMucState extends State<ScreenThemDanhMuc> {
-  final TextEditingController _tenController =
-      TextEditingController();
+  final TextEditingController _tenController = TextEditingController();
 
   final List<IconData> _danhSachIcons = [
     Icons.fastfood,
@@ -54,7 +53,7 @@ class _ScreenThemDanhMucState extends State<ScreenThemDanhMuc> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Thêm danh mục mới'),
+        title: Text(AppTrans.getText(context, 'them_danh_muc_moi')),
         backgroundColor: const Color.fromARGB(255, 98, 151, 194),
         centerTitle: true,
       ),
@@ -65,21 +64,18 @@ class _ScreenThemDanhMucState extends State<ScreenThemDanhMuc> {
           children: [
             TextField(
               controller: _tenController,
-              decoration: const InputDecoration(
-                labelText: 'Tên danh mục',
-                hintText: 'VD: Tiền điện, Đi chơi...',
-                border: OutlineInputBorder(),
-                prefixIcon: Icon(Icons.edit),
+              decoration: InputDecoration(
+                labelText: AppTrans.getText(context, 'ten_danh_muc'),
+                hintText: AppTrans.getText(context, 'hint_ten_danh_muc'),
+                border: const OutlineInputBorder(),
+                prefixIcon: const Icon(Icons.edit),
               ),
             ),
             const SizedBox(height: 25),
 
-            const Text(
-              'Chọn màu sắc:',
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 16,
-              ),
+            Text(
+              AppTrans.getText(context, 'chon_mau_sac'),
+              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
             ),
             const SizedBox(height: 10),
             Wrap(
@@ -87,8 +83,7 @@ class _ScreenThemDanhMucState extends State<ScreenThemDanhMuc> {
               runSpacing: 12,
               children: _danhSachMau.map((mau) {
                 return GestureDetector(
-                  onTap: () =>
-                      setState(() => _mauDuocChon = mau),
+                  onTap: () => setState(() => _mauDuocChon = mau),
                   child: Container(
                     width: 40,
                     height: 40,
@@ -108,12 +103,9 @@ class _ScreenThemDanhMucState extends State<ScreenThemDanhMuc> {
             ),
             const SizedBox(height: 25),
 
-            const Text(
-              'Chọn biểu tượng:',
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 16,
-              ),
+            Text(
+              AppTrans.getText(context, 'chon_bieu_tuong'),
+              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
             ),
             const SizedBox(height: 10),
             Wrap(
@@ -121,8 +113,7 @@ class _ScreenThemDanhMucState extends State<ScreenThemDanhMuc> {
               runSpacing: 15,
               children: _danhSachIcons.map((icon) {
                 return GestureDetector(
-                  onTap: () =>
-                      setState(() => _iconDuocChon = icon),
+                  onTap: () => setState(() => _iconDuocChon = icon),
                   child: Container(
                     padding: const EdgeInsets.all(10),
                     decoration: BoxDecoration(
@@ -139,9 +130,7 @@ class _ScreenThemDanhMucState extends State<ScreenThemDanhMuc> {
                     ),
                     child: Icon(
                       icon,
-                      color: _iconDuocChon == icon
-                          ? _mauDuocChon
-                          : Colors.grey,
+                      color: _iconDuocChon == icon ? _mauDuocChon : Colors.grey,
                       size: 32,
                     ),
                   ),
@@ -155,12 +144,7 @@ class _ScreenThemDanhMucState extends State<ScreenThemDanhMuc> {
               height: 50,
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color.fromARGB(
-                    255,
-                    98,
-                    151,
-                    194,
-                  ),
+                  backgroundColor: const Color.fromARGB(255, 98, 151, 194),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(8),
                   ),
@@ -168,9 +152,12 @@ class _ScreenThemDanhMucState extends State<ScreenThemDanhMuc> {
                 onPressed: () {
                   if (_tenController.text.trim().isEmpty) {
                     ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
+                      SnackBar(
                         content: Text(
-                          'Vui lòng nhập tên danh mục!',
+                          AppTrans.getText(
+                            context,
+                            'vui_long_nhap_ten_danh_muc',
+                          ),
                         ),
                       ),
                     );
@@ -188,12 +175,9 @@ class _ScreenThemDanhMucState extends State<ScreenThemDanhMuc> {
 
                   Navigator.pop(context);
                 },
-                child: const Text(
-                  'Lưu danh mục',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 18,
-                  ),
+                child: Text(
+                  AppTrans.getText(context, 'luu_danh_muc'),
+                  style: const TextStyle(color: Colors.white, fontSize: 18),
                 ),
               ),
             ),
