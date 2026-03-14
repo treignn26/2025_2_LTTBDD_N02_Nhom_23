@@ -21,6 +21,39 @@ class _ScreenBaoCaoState extends State<ScreenBaoCao> {
   Widget build(BuildContext context) {
     var provider = Provider.of<ChiTieuProvider>(context);
 
+    final itemsThangNay = provider.itemsTheoThang(_viewData);
+    final double tongChiThang = itemsThangNay.fold(
+      0.0,
+      (sum, item) => sum + item.soTien,
+    );
+
+    final uniqueCategories = itemsThangNay.map((e) => e.danhMuc).toSet();
+
+    List<PieChartSectionData> pieSections = [];
+    if (tongChiThang > 0) {
+      pieSections = uniqueCategories.map((danhMuc) {
+        final double tongDanhMuc = provider.tongTheoDanhMuc(danhMuc, _viewData);
+        final double percentage = (tongDanhMuc / tongChiThang) * 100;
+
+        final danhMucInfo = provider.danhMucs.firstWhere(
+          (dm) => dm['name'] == danhMuc,
+          orElse: () => {'color': Colors.grey},
+        );
+
+        return PieChartSectionData(
+          value: percentage,
+          color: danhMucInfo['color'] as Color,
+          title: '${percentage.toStringAsFixed(0)}%\n$danhMuc',
+          radius: 60,
+          titleStyle: const TextStyle(
+            fontSize: 12,
+            fontWeight: FontWeight.bold,
+            color: Colors.white,
+          ),
+        );
+      }).toList();
+    }
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: const Color.fromARGB(255, 98, 151, 194),
@@ -34,14 +67,7 @@ class _ScreenBaoCaoState extends State<ScreenBaoCao> {
             setState(() => _viewType = val!);
           },
         ),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.search),
-            onPressed: () {
-              //Timf kiesme
-            },
-          ),
-        ],
+        actions: [IconButton(icon: const Icon(Icons.search), onPressed: () {})],
       ),
       body: SingleChildScrollView(
         child: Column(
@@ -50,7 +76,7 @@ class _ScreenBaoCaoState extends State<ScreenBaoCao> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 IconButton(
-                  icon: Icon(Icons.chevron_left),
+                  icon: const Icon(Icons.chevron_left),
                   onPressed: () {
                     setState(
                       () => _viewData = DateTime(
@@ -60,9 +86,15 @@ class _ScreenBaoCaoState extends State<ScreenBaoCao> {
                     );
                   },
                 ),
-                Text(DateFormat('MM/yyyy').format(_viewData)),
+                Text(
+                  DateFormat('MM/yyyy').format(_viewData),
+                  style: const TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16,
+                  ),
+                ),
                 IconButton(
-                  icon: Icon(Icons.chevron_right),
+                  icon: const Icon(Icons.chevron_right),
                   onPressed: () {
                     setState(
                       () => _viewData = DateTime(
@@ -77,49 +109,37 @@ class _ScreenBaoCaoState extends State<ScreenBaoCao> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                _buildStatItem('Chi tiêu', provider.totalExpense, Colors.red),
-                _buildStatItem('Thu nhập', 0, Colors.blue),
-                _buildStatItem('Thu chi', -provider.totalExpense, Colors.black),
+                // Thay vì provider.totalExpense, mình dùng tongChiThang để chuẩn xác theo tháng
+                _buildStatItem('Chi tiêu', tongChiThang, Colors.red),
+                _buildStatItem(
+                  'Thu nhập',
+                  0,
+                  Colors.blue,
+                ), // Tạm để 0 vì chưa có thu nhập
+                _buildStatItem('Thu chi', -tongChiThang, Colors.black),
               ],
             ),
+            const SizedBox(height: 20),
+
             SizedBox(
               height: 200,
-              child: PieChart(
-                PieChartData(
-                  sections: [
-                    PieChartSectionData(
-                      value: 40,
-                      color: Colors.orange,
-                      title: 'Ăn uống',
+              child: itemsThangNay.isEmpty
+                  ? const Center(
+                      child: Text(
+                        'Chưa có chi tiêu nào trong tháng này',
+                        style: TextStyle(color: Colors.grey),
+                      ),
+                    )
+                  : PieChart(
+                      PieChartData(
+                        sections: pieSections,
+                        centerSpaceRadius: 50,
+                        sectionsSpace: 2, // Khoảng cách giữa các mảnh
+                      ),
                     ),
-                    PieChartSectionData(
-                      value: 30,
-                      color: Colors.blue,
-                      title: 'Xăng xe',
-                    ),
-                  ],
-                ),
-              ),
             ),
+            const SizedBox(height: 20),
             const Divider(),
-
-            // ListView.builder(
-            //   shrinkWrap: true,
-            //   physics: NeverScrollableScrollPhysics(),
-            //   itemCount: provider.items.length,
-            //   itemBuilder: (context, index) {
-            //     final item = provider.items[index];
-            //     return ListTile(
-            //       leading: Icon(item.iconData),
-            //       title: Text(item.danhMuc),
-            //       subtitle: Text(item.ghiChu),
-            //       trailing: Text(
-            //         '-${item.soTien}VND',
-            //         style: TextStyle(color: Colors.red),
-            //       ),
-            //     );
-            //   },
-            // ),
           ],
         ),
       ),

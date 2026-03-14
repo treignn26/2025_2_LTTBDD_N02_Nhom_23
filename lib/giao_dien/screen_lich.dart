@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:btap_lon/model/chi_tieu_provider.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:intl/intl.dart';
 import 'package:btap_lon/giao_dien/screen_chi_tieu.dart';
@@ -14,22 +16,28 @@ class ScreenLich extends StatefulWidget {
 class _ScreenLichState extends State<ScreenLich> {
   CalendarFormat _calendarFormat = CalendarFormat.month;
   DateTime _focusedDay = DateTime.now();
-  DateTime? _selectedDay;
+  DateTime? _selectedDay = DateTime.now();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: const Color.fromARGB(255, 98, 151, 194),
         title: const Text('Sổ thu chi'),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.search),
-            onPressed: () {
-              //trang timf kiemse
-            },
-          ),
-          const Icon(Icons.more_vert),
-        ],
+        centerTitle: true,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () => Navigator.pop(context),
+        ),
+        // actions: [
+        //   IconButton(
+        //     icon: const Icon(Icons.search),
+        //     onPressed: () {
+        //       //trang timf kiemse
+        //     },
+        //   ),
+        //   const Icon(Icons.more_vert),
+        // ],
       ),
       body: Column(
         children: [
@@ -37,15 +45,15 @@ class _ScreenLichState extends State<ScreenLich> {
             firstDay: DateTime.utc(2000, 1, 1),
             lastDay: DateTime.utc(3000, 12, 31),
             focusedDay: _focusedDay,
-            calendarFormat: _calendarFormat,
-            selectedDayPredicate: (day) =>
-                isSameDay(_selectedDay, day),
+
+            selectedDayPredicate: (day) => isSameDay(_selectedDay, day),
             onDaySelected: (selectedDay, focusedDay) {
               setState(() {
                 _selectedDay = selectedDay;
                 _focusedDay = focusedDay;
               });
             },
+            calendarFormat: CalendarFormat.month,
             calendarStyle: const CalendarStyle(
               todayDecoration: BoxDecoration(
                 color: const Color.fromARGB(255, 98, 151, 194),
@@ -66,79 +74,157 @@ class _ScreenLichState extends State<ScreenLich> {
               },
             ),
           ),
-          const Divider(),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                _buildSummaryItem(
-                  'Tổng hiện có',
-                  '10.000.000',
-                  Colors.blue,
-                ),
-                _buildSummaryItem(
-                  'Tổng chi',
-                  '5.000.000',
-                  Colors.red,
-                ),
-              ],
-            ),
-          ),
-          const Divider(),
+          const Divider(thickness: 1, height: 1),
           Expanded(
-            child: ListView(
-              children: [
-                _buildTransactionItem(
-                  'Ăn uống',
-                  'Phở bòo',
-                  '-35.000',
-                  Icons.restaurant,
-                  Colors.orange,
-                ),
-                _buildTransactionItem(
-                  'Xăng xe',
-                  'Đổ xăng',
-                  '-500.000',
-                  Icons.gas_meter,
-                  Colors.green,
-                ),
-              ],
+            child: Consumer<ChiTieuProvider>(
+              builder: (context, provider, child) {
+                final itemsTheoNgay = provider.danhSach.where((item) {
+                  return isSameDay(item.ngay, _selectedDay);
+                }).toList();
+
+                final tongChiNgay = itemsTheoNgay.fold(
+                  0.0,
+                  (sum, item) => sum + item.soTien,
+                );
+
+                return Column(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 12,
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Column(
+                            children: const [
+                              Text(
+                                'Tổng hiện có',
+                                style: TextStyle(
+                                  color: Colors.grey,
+                                  fontSize: 14,
+                                ),
+                              ),
+                              Text(
+                                '0 VND',
+                                style: TextStyle(
+                                  color: Colors.blue,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 16,
+                                ),
+                              ),
+                            ],
+                          ),
+                          Column(
+                            children: [
+                              const Text(
+                                'Tổng chi',
+                                style: TextStyle(
+                                  color: Colors.grey,
+                                  fontSize: 14,
+                                ),
+                              ),
+                              Text(
+                                NumberFormat.currency(
+                                  locale: 'vi_VN',
+                                  symbol: 'VND',
+                                ).format(tongChiNgay),
+                                style: const TextStyle(
+                                  color: Colors.red,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 16,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                    const Divider(thickness: 1, height: 1),
+
+                    Expanded(
+                      child: itemsTheoNgay.isEmpty
+                          ? const Center(
+                              child: Text(
+                                'Không có chi tiêu nào',
+                                style: TextStyle(color: Colors.grey),
+                              ),
+                            )
+                          : ListView.builder(
+                              itemCount: itemsTheoNgay.length,
+                              itemBuilder: (context, index) {
+                                final item = itemsTheoNgay[index];
+                                final danhMucInfo = provider.danhMucs
+                                    .firstWhere(
+                                      (dm) => dm['name'] == item.danhMuc,
+                                      orElse: () => {
+                                        'icon': Icons.category,
+                                        'color': Colors.grey,
+                                      },
+                                    );
+                                return ListTile(
+                                  leading: Container(
+                                    padding: const EdgeInsets.all(8),
+                                    decoration: BoxDecoration(
+                                      color: (danhMucInfo['color'] as Color)
+                                          .withOpacity(0.2),
+                                      shape: BoxShape.circle,
+                                    ),
+                                    child: Icon(
+                                      danhMucInfo['icon'] as IconData,
+                                      color: danhMucInfo['color'] as Color,
+                                    ),
+                                  ),
+                                  title: Text(
+                                    item.danhMuc,
+                                    style: const TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                  subtitle: Text(
+                                    item.ghiChu.isEmpty
+                                        ? 'Không có ghi chú'
+                                        : item.ghiChu,
+                                  ),
+                                  trailing: Text(
+                                    '-${NumberFormat.currency(locale: 'vi_VN', symbol: 'VND').format(item.soTien)}',
+                                    style: const TextStyle(
+                                      color: Colors.red,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                );
+                              },
+                            ),
+                    ),
+                  ],
+                );
+              },
             ),
           ),
         ],
       ),
+
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: 1,
-        selectedItemColor: const Color.fromARGB(
-          255,
-          98,
-          151,
-          194,
-        ),
+        selectedItemColor: const Color.fromARGB(255, 98, 151, 194),
         onTap: (index) {
           if (index == 1) return;
           if (index == 0) {
             Navigator.push(
               context,
-              MaterialPageRoute(
-                builder: (context) => const ScreenChiTieu(),
-              ),
+              MaterialPageRoute(builder: (context) => const ScreenChiTieu()),
             );
           } else if (index == 2) {
             Navigator.pushReplacement(
               context,
-              MaterialPageRoute(
-                builder: (context) => const ScreenBaoCao(),
-              ),
+              MaterialPageRoute(builder: (context) => const ScreenBaoCao()),
             );
           }
         },
         items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.edit),
-            label: 'Nhập vào',
-          ),
+          BottomNavigationBarItem(icon: Icon(Icons.edit), label: 'Nhập vào'),
           BottomNavigationBarItem(
             icon: Icon(Icons.calendar_month),
             label: 'Lịch',
@@ -152,11 +238,7 @@ class _ScreenLichState extends State<ScreenLich> {
     );
   }
 
-  Widget _buildSummaryItem(
-    String title,
-    String amount,
-    Color color,
-  ) {
+  Widget _buildSummaryItem(String title, String amount, Color color) {
     return Column(
       children: [
         Text(title, style: const TextStyle(color: Colors.grey)),
@@ -188,10 +270,7 @@ class _ScreenLichState extends State<ScreenLich> {
       subtitle: Text(subtitle),
       trailing: Text(
         "$amount VND",
-        style: const TextStyle(
-          color: Colors.red,
-          fontWeight: FontWeight.bold,
-        ),
+        style: const TextStyle(color: Colors.red, fontWeight: FontWeight.bold),
       ),
     );
   }
