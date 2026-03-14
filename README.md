@@ -41,7 +41,7 @@
 
 ## 🚀 Hướng dẫn cài đặt và chạy thử nghiệm
 
-1. **Đảm bảo bạn đã cài đặt môi trường Flutter:** [Hướng dẫn cài đặt](https://docs.flutter.dev/get-started/install)
+1. **Cài đặt môi trường Flutter:** [Hướng dẫn cài đặt](https://docs.flutter.dev/get-started/install)
 2. **Clone repository này về máy:**
    ```bash
    git clone <link-github-cua-ban>
