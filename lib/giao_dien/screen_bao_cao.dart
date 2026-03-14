@@ -140,6 +140,62 @@ class _ScreenBaoCaoState extends State<ScreenBaoCao> {
             ),
             const SizedBox(height: 20),
             const Divider(),
+            if (uniqueCategories.isNotEmpty)
+              ListView.builder(
+                shrinkWrap:
+                    true, // Rất quan trọng khi dùng trong SingleChildScrollView
+                physics:
+                    const NeverScrollableScrollPhysics(), // Tắt cuộn của ListView để dùng cuộn của màn hình tổng
+                itemCount: uniqueCategories.length,
+                itemBuilder: (context, index) {
+                  // Lấy tên danh mục (VD: Ăn uống)
+                  final danhMuc = uniqueCategories.elementAt(index);
+
+                  // Tính tổng tiền và phần trăm của danh mục này
+                  final double tongDanhMuc = provider.tongTheoDanhMuc(
+                    danhMuc,
+                    _viewData,
+                  );
+                  final double percentage = (tongDanhMuc / tongChiThang) * 100;
+
+                  // Lấy màu và icon
+                  final danhMucInfo = provider.danhMucs.firstWhere(
+                    (dm) => dm['name'] == danhMuc,
+                    orElse: () => {
+                      'icon': Icons.category,
+                      'color': Colors.grey,
+                    },
+                  );
+
+                  return ListTile(
+                    leading: Container(
+                      padding: const EdgeInsets.all(8),
+                      decoration: BoxDecoration(
+                        color: (danhMucInfo['color'] as Color).withOpacity(0.2),
+                        shape: BoxShape.circle,
+                      ),
+                      child: Icon(
+                        danhMucInfo['icon'] as IconData,
+                        color: danhMucInfo['color'] as Color,
+                      ),
+                    ),
+                    title: Text(
+                      danhMuc,
+                      style: const TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                    subtitle: Text(
+                      '${percentage.toStringAsFixed(1)}%',
+                    ), // Hiện tỷ lệ phần trăm ở dưới
+                    trailing: Text(
+                      '-${NumberFormat.currency(locale: 'vi_VN', symbol: 'VND').format(tongDanhMuc)}',
+                      style: const TextStyle(
+                        color: Colors.red,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  );
+                },
+              ),
           ],
         ),
       ),
