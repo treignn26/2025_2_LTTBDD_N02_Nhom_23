@@ -18,14 +18,14 @@ class _ScreenChiTieuState extends State<ScreenChiTieu> {
   final TextEditingController _soTienController = TextEditingController();
   String _selectedDanhMuc = 'Ăn uống';
 
-  List<Map<String, dynamic>> danhMucs = [
-    {'name': 'Ăn uống', 'icon': Icons.restaurant, 'color': Colors.orange},
-    {'name': 'Giao hàng', 'icon': Icons.local_shipping, 'color': Colors.blue},
-    {'name': 'Mua sắm', 'icon': Icons.shopping_cart, 'color': Colors.green},
-    {'name': 'Giải trí', 'icon': Icons.movie, 'color': Colors.purple},
-    {'name': 'Y tế', 'icon': Icons.local_hospital, 'color': Colors.red},
-    {'name': 'Giáo dục', 'icon': Icons.school, 'color': Colors.indigo},
-  ];
+  // List<Map<String, dynamic>> danhMucs = [
+  //   {'name': 'Ăn uống', 'icon': Icons.restaurant, 'color': Colors.orange},
+  //   {'name': 'Giao hàng', 'icon': Icons.local_shipping, 'color': Colors.blue},
+  //   {'name': 'Mua sắm', 'icon': Icons.shopping_cart, 'color': Colors.green},
+  //   {'name': 'Giải trí', 'icon': Icons.movie, 'color': Colors.purple},
+  //   {'name': 'Y tế', 'icon': Icons.local_hospital, 'color': Colors.red},
+  //   {'name': 'Giáo dục', 'icon': Icons.school, 'color': Colors.indigo},
+  // ];
 
   Future<void> _selectDate(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
@@ -87,35 +87,89 @@ class _ScreenChiTieuState extends State<ScreenChiTieu> {
               alignment: Alignment.centerLeft,
               child: Text('Danh mục'),
             ),
-            GridView.builder(
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 3,
-              ),
-              itemCount: danhMucs.length,
-              itemBuilder: (context, index) {
-                return GestureDetector(
-                  onTap: () => setState(
-                    () => _selectedDanhMuc = danhMucs[index]['name'],
-                  ),
+            Consumer<ChiTieuProvider>(
+              builder: (context, provider, child) {
+                final displayList = List.from(provider.danhMucs);
+                displayList.add({
+                  'name': 'Chỉnh sửa',
+                  'icon': Icons.edit,
+                  'color': Colors.grey,
+                });
+
+                return SizedBox(
+                  height: 200,
                   child: Container(
                     decoration: BoxDecoration(
-                      border: Border.all(
-                        color: _selectedDanhMuc == danhMucs[index]['name']
-                            ? const Color.fromARGB(255, 37, 28, 28)
-                            : Colors.grey.shade300,
-                      ),
+                      border: Border.all(color: Colors.grey.shade300),
+                      borderRadius: BorderRadius.circular(8),
                     ),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(
-                          danhMucs[index]['icon'],
-                          color: danhMucs[index]['color'],
-                        ),
-                        Text(danhMucs[index]['name']),
-                      ],
+                    child: GridView.builder(
+                      padding: const EdgeInsets.all(8),
+                      shrinkWrap: true,
+                      physics: const BouncingScrollPhysics(),
+                      gridDelegate:
+                          const SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: 3,
+                            mainAxisSpacing: 8,
+                            crossAxisSpacing: 8,
+                            childAspectRatio: 1.2,
+                          ),
+                      itemCount: displayList.length,
+                      itemBuilder: (context, index) {
+                        final isEditButton = index == displayList.length - 1;
+                        final danhMuc = displayList[index];
+
+                        return GestureDetector(
+                          onTap: () {
+                            if (isEditButton) {
+                              print("Mở trang chỉnh sửa danh mục");
+                            } else {
+                              setState(
+                                () => _selectedDanhMuc = danhMuc['name'],
+                              );
+                            }
+                          },
+                          child: Container(
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(8),
+                              border: Border.all(
+                                color:
+                                    (!isEditButton &&
+                                        _selectedDanhMuc == danhMuc['name'])
+                                    ? Colors.blue
+                                    : Colors.transparent,
+                                width: 2,
+                              ),
+                              color:
+                                  (!isEditButton &&
+                                      _selectedDanhMuc == danhMuc['name'])
+                                  ? Colors.blue.withOpacity(0.1)
+                                  : Colors.transparent,
+                            ),
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(
+                                  danhMuc['icon'],
+                                  color: danhMuc['color'],
+                                  size: 28,
+                                ),
+                                const SizedBox(height: 4),
+                                Text(
+                                  danhMuc['name'],
+                                  style: TextStyle(
+                                    fontSize: 12,
+                                    color: isEditButton
+                                        ? Colors.grey[700]
+                                        : Colors.black87,
+                                  ),
+                                  textAlign: TextAlign.center,
+                                ),
+                              ],
+                            ),
+                          ),
+                        );
+                      },
                     ),
                   ),
                 );
