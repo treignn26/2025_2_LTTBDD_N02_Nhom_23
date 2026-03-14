@@ -178,7 +178,7 @@ class _ScreenChiTieuState extends State<ScreenChiTieu> {
             label: 'Báo cáo',
           ),
         ],
-        selectedItemColor: Colors.orange,
+        selectedItemColor: const Color.fromARGB(255, 98, 151, 194),
         //unselectedItemColor: Colors.grey,
         type: BottomNavigationBarType.fixed,
       ),

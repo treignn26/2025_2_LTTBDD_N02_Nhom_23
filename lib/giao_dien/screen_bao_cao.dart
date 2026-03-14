@@ -5,6 +5,8 @@ import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
 import 'package:btap_lon/giao_dien/screen_chi_tieu.dart';
 import 'package:btap_lon/giao_dien/screen_lich.dart';
+import 'package:btap_lon/giao_dien/screen_bao_cao.dart';
+import 'package:btap_lon/model/chi_tieu.dart';
 
 class ScreenBaoCao extends StatefulWidget {
   const ScreenBaoCao({super.key});
@@ -100,26 +102,7 @@ class _ScreenBaoCaoState extends State<ScreenBaoCao> {
               ),
             ),
             const Divider(),
-            Expanded(
-              child: ListView(
-                children: [
-                  _buildTransactionItem(
-                    'Ăn uống',
-                    'Phở bòo',
-                    '-35.000',
-                    Icons.restaurant,
-                    Colors.orange,
-                  ),
-                  _buildTransactionItem(
-                    'Xăng xe',
-                    'Đổ xăng',
-                    '-500.000',
-                    Icons.gas_meter,
-                    Colors.green,
-                  ),
-                ],
-              ),
-            ),
+
             // ListView.builder(
             //   shrinkWrap: true,
             //   physics: NeverScrollableScrollPhysics(),
@@ -159,7 +142,7 @@ class _ScreenBaoCaoState extends State<ScreenBaoCao> {
   Widget _buildBottomNavBar(int currentIndex) {
     return BottomNavigationBar(
       currentIndex: currentIndex,
-      selectedItemColor: Colors.orange,
+      selectedItemColor: const Color.fromARGB(255, 98, 151, 194),
       type: BottomNavigationBarType.fixed,
       onTap: (index) {
         if (index == 2) return;
@@ -186,6 +169,20 @@ class _ScreenBaoCaoState extends State<ScreenBaoCao> {
     );
   }
 }
-// extension on ChiTieuProvider {
-//   get items => null;
-// }
+
+extension ChiTieuExtension on ChiTieuProvider {
+  List<ChiTieu> itemsTheoThang(DateTime date) {
+    return danhSach
+        .where(
+          (item) =>
+              item.ngay.month == date.month && item.ngay.year == date.year,
+        )
+        .toList();
+  }
+
+  double tongTheoDanhMuc(String danhMuc, DateTime date) {
+    return itemsTheoThang(date)
+        .where((item) => item.danhMuc == danhMuc)
+        .fold(0, (sum, item) => sum + item.soTien);
+  }
+}
